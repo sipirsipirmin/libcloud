@@ -3477,7 +3477,7 @@ class GCENodeDriver(NodeDriver):
     def ex_create_image(self, name, volume, description=None, family=None,
                         guest_os_features=None, use_existing=True,
                         wait_for_completion=True, ex_licenses=None,
-                        ex_labels=None):
+                        ex_labels=None, force_create=False):
         """
         Create an image from the provided volume.
 
@@ -3522,6 +3522,10 @@ class GCENodeDriver(NodeDriver):
                                        creation progress
         :type     wait_for_completion: ``bool``
 
+        :keyword force_create: If True, image will be create even if volume
+                               already using from another resource
+        :type    force_create: ``bool``
+
         :return:  A GCENodeImage object for the new image
         :rtype:   :class:`GCENodeImage`
 
@@ -3552,7 +3556,7 @@ class GCENodeDriver(NodeDriver):
                 guest_os_features = [guest_os_features]
             for feature in guest_os_features:
                 image_data['guestOsFeatures'].append({'type': feature})
-        request = '/global/images'
+        request = f'/global/images?forceCreate={force_create}'
 
         try:
             if wait_for_completion:
